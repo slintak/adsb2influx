@@ -260,7 +260,7 @@ class InfluxDB(object):
                     continue
                 elif type(v) is bool:
                     # Boolean should be 't' or 'f'.
-                    fields.append('{}={}'.format(k, 't' if v == -1 else 'f'))
+                    fields.append('{}={}'.format(k, 't' if v else 'f'))
                 elif type(v) is int:
                     fields.append('{}={}i'.format(k, v))
                 elif type(v) is float:
