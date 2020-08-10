@@ -245,7 +245,11 @@ class Dump1090(object):
 class InfluxDB(object):
     def __init__(self, url, database='dump1090', username=None, password=None):
         self.url = url
+        self.username = username
+        self.password = password
         self.params = '/write?precision=s&db={}'.format(database)
+        if username and password:
+            self.params += '&u={}&p={}'.format(username, password)
 
     def write(self, measurement, data, timestamp=None):
         '''Write data with tags to measurement in InfluxDB. Use line protocol.'''
@@ -321,6 +325,16 @@ def main():
         help = "InfluxDB URL [http://127.0.0.1:8186]"
     )
     parser.add_argument(
+        '-in', '--influx-username',
+        default = None,
+        help = "InfluxDB Username"
+    )
+    parser.add_argument(
+        '-ip', '--influx-password',
+        default = None,
+        help = "InfluxDB Password"
+    )
+    parser.add_argument(
         '-db', '--influx-database',
         default = "adsb",
         help = "InfluxDB datbase name [adsb]"
@@ -341,7 +355,12 @@ def main():
     dump1090 = Dump1090(args.dump1090_server, int(args.dump1090_port))
     dump1090.connect()
 
-    influx = InfluxDB(args.influx_url, database=args.influx_database)
+    influx = InfluxDB(
+        args.influx_url,
+        database=args.influx_database,
+        username=args.influx_username,
+        password=args.influx_password
+    )
 
     last_print = time.time()
 
